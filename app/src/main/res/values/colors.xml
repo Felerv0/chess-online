@@ -13,5 +13,6 @@
     <color name="black_green">#1C221C</color>
     <color name="background_dark">#0A100D</color>
     <color name="yellow_checked">#D7D25D</color>
+    <color name="user_item_bg">#121715</color>
 
 </resources>

@@ -12,18 +12,19 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chess_online.R;
+import com.example.chess_online.domain.Friend;
 import com.example.chess_online.domain.User;
 import com.example.chess_online.fragment.FriendsFragment;
 
 import java.util.List;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
-    private List<User> friends;
+    private List<Friend> friends;
     private Context context;
     private LayoutInflater layoutInflater;
     private FriendsFragment fragment;
 
-    public FriendAdapter(List<User> friends, Context context, LayoutInflater layoutInflater, FriendsFragment fragment) {
+    public FriendAdapter(List<Friend> friends, Context context, FriendsFragment fragment) {
         this.friends = friends;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
@@ -39,7 +40,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        User user = friends.get(position);
+        Friend user = friends.get(position);
         holder.tv_username.setText(user.getUsername());
         //holder.iv_profile_image.setImageDrawable(R.drawable.profile_icon); TODO
         holder.btn_play.setOnClickListener(new View.OnClickListener() {

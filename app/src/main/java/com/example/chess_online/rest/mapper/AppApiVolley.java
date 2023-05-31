@@ -13,19 +13,26 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.chess_online.cache.UserCache;
+import com.example.chess_online.domain.GameState;
 import com.example.chess_online.domain.User;
 import com.example.chess_online.fragment.LoginFragment;
+import com.example.chess_online.fragment.MatchesFragment;
 import com.example.chess_online.rest.AppApi;
 import com.example.chess_online.fragment.RegistrationFragment;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 public class AppApiVolley implements AppApi {
@@ -47,7 +54,6 @@ public class AppApiVolley implements AppApi {
                 url,
                 null,
                 new Response.Listener<JSONObject>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -69,16 +75,18 @@ public class AppApiVolley implements AppApi {
                             ((LoginFragment) fragment).makeToastBadCredentials();
                         }
                     }
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> headers = new Hashtable<>();
-                        String credentials = username + ":"
-                                + password;
-                        headers.put("Content-Type", "application/json");
-                        headers.put("Authorization", "Basic " + Base64.encodeToString(
-                                credentials.getBytes(), Base64.NO_WRAP));
-                        return headers;
-                    }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new Hashtable<>();
+                String credentials = username + ":"
+                        + password;
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "Basic " + Base64.encodeToString(
+                        credentials.getBytes(), Base64.NO_WRAP));
+                return headers;
+            }
+        };
         requestQueue.add(jsonObjectRequest);
     }
 
@@ -93,8 +101,9 @@ public class AppApiVolley implements AppApi {
             params.put("fullname", user.getFullname());
             params.put("password", user.getPassword());
             params.put("username", user.getUsername());
+            params.put("country_id", 1);
         } catch (JSONException e) {
-            Log.e("API_TASK_ADD_USER", e.getMessage());
+            Log.e("API_TASK_ADD_USER", e.toString());
         }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -111,7 +120,7 @@ public class AppApiVolley implements AppApi {
             public void onErrorResponse(VolleyError error) {
                 if(fragment.getClass().equals(RegistrationFragment.class))
                     ((RegistrationFragment) fragment).makeToastFailedRegistration();
-                Log.i("API_FAILED_REGISTRATION", error.getMessage());
+                Log.i("API_FAILED_REGISTRATION", error.toString());
             }
         }
         );
@@ -119,10 +128,83 @@ public class AppApiVolley implements AppApi {
 
     }
 
+    public void getMatches(User user) {
+        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
+        String url = BASE_URL + "/api/" + user.getUsername() + "/matches";
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        List<GameState> list = new ArrayList<>();
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject object = response.getJSONObject(i);
+                                GameState gameState = new GameState();
+                                gameState.setUser1(object.getString("user1"));
+                                gameState.setUser2(object.getString("user2"));
+                                gameState.setId(object.getLong("id"));
+                                list.add(gameState);
+                                Log.i("MATCH__", String.valueOf(gameState.getId()));
+                            }
+                        }
+                        catch (JSONException e) {
+                            Log.i("MATCH", e.toString());
+                            throw new RuntimeException(e);
+                        }
+                        ((MatchesFragment) fragment).setMatches(list);
+                        Log.i("API_MATCHES", list.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ((MatchesFragment) fragment).makeToastFailedLoad();
+                    }
+                }
+        ){
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getHeadersBasic();
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+    public void getFriends(User user) {
+        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
+//        queue.add();
+    }
+
+    public void inviteUser(String username) {
+        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
+        String url = BASE_URL + "/api/invite/" + username;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("FRIENDS_API", "Cant' invite user: " + username);
+                    }
+                }
+        ) {
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getHeadersBasic();
+            }
+        };
+    }
+
     private class ErrorListenerImpl implements Response.ErrorListener {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("AppApiErrorResponse", error.getMessage());
+            Log.e("AppApiErrorResponse", error.toString());
         }
     }
     private Map<String, String> getHeadersBasic() throws AuthFailureError {
