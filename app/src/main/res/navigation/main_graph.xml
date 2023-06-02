@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_matchesFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_matchesFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -62,4 +65,8 @@
             android:id="@+id/action_profileFragment_to_friendsFragment"
             app:destination="@id/friendsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.example.chess_online.fragment.GameFragment"
+        android:label="GameFragment" />
 </navigation>

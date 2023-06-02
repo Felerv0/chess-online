@@ -20,6 +20,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.chess_online.cache.UserCache;
 import com.example.chess_online.domain.GameState;
 import com.example.chess_online.domain.User;
+import com.example.chess_online.domain.model.FigureMove;
+import com.example.chess_online.fragment.GameFragment;
 import com.example.chess_online.fragment.LoginFragment;
 import com.example.chess_online.fragment.MatchesFragment;
 import com.example.chess_online.rest.AppApi;
@@ -142,12 +144,9 @@ public class AppApiVolley implements AppApi {
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject object = response.getJSONObject(i);
-                                GameState gameState = new GameState();
-                                gameState.setUser1(object.getString("user1"));
-                                gameState.setUser2(object.getString("user2"));
-                                gameState.setId(object.getLong("id"));
+                                GameState gameState = new GameState(object);
                                 list.add(gameState);
-                                Log.i("MATCH__", String.valueOf(gameState.getId()));
+                                Log.i("MATCH_ID", String.valueOf(gameState.getId()));
                             }
                         }
                         catch (JSONException e) {
@@ -156,6 +155,9 @@ public class AppApiVolley implements AppApi {
                         }
                         ((MatchesFragment) fragment).setMatches(list);
                         Log.i("API_MATCHES", list.toString());
+                        if (list.size() != 0 ) {
+                            Log.i("API_MATCHES", list.get(0).getFigures().toString());
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -170,6 +172,99 @@ public class AppApiVolley implements AppApi {
             }
         };
         queue.add(jsonObjectRequest);
+    }
+
+    public void getMatch(long id, User user) {
+        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
+        String url = BASE_URL + "/api/" + id + "/get";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("CHECK_FUNC", "CHECK");
+                        GameState gameState = new GameState(response);
+                        Log.i("API_MATCH_GET", gameState.toString());
+                        ((GameFragment) fragment).setCurrentState(gameState);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("API_MATCHES", "BAD CONNECTION");
+                    }
+                }
+        ){
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getHeadersBasic();
+            }
+        };
+        queue.add(jsonObjectRequest);
+//        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
+//        String url = BASE_URL + "/api/" + user.getUsername() + "/matches";
+//        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+//                Request.Method.GET,
+//                url,
+//                null,
+//                new Response.Listener<JSONArray>() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        try {
+//                            for (int i = 0; i < response.length(); i++) {
+//                                JSONObject object = response.getJSONObject(i);
+//                                GameState gameState = new GameState(object);
+//                                if (gameState.getId() == id) {
+//                                    ((GameFragment) fragment).setCurrentState(gameState);
+//                                }
+//                            }
+//                        }
+//                        catch (JSONException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        ((MatchesFragment) fragment).makeToastFailedLoad();
+//                    }
+//                }
+//        ){
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                return getHeadersBasic();
+//            }
+//        };
+//        queue.add(jsonObjectRequest);
+    }
+
+    public void applyMove(long id, FigureMove figureMove) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
+        String url = BASE_URL + "/api/" + id + "/move";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                figureMove.toJSON(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        ){
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getHeadersBasic();
+            }
+        };
+        queue.add(jsonObjectRequest);
+
     }
 
     public void getFriends(User user) {
@@ -199,6 +294,7 @@ public class AppApiVolley implements AppApi {
                 return getHeadersBasic();
             }
         };
+        queue.add(jsonObjectRequest);
     }
 
     private class ErrorListenerImpl implements Response.ErrorListener {

@@ -14,5 +14,7 @@
     <color name="background_dark">#0A100D</color>
     <color name="yellow_checked">#D7D25D</color>
     <color name="user_item_bg">#121715</color>
+    <color name="dark_tile">#7D945D</color>
+    <color name="light_tile">#EEEED5</color>
 
 </resources>

@@ -1,6 +1,8 @@
 package com.example.chess_online.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chess_online.MainActivity;
 import com.example.chess_online.R;
 import com.example.chess_online.cache.UserCache;
 import com.example.chess_online.domain.GameState;
@@ -48,7 +53,13 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 Log.i("CLICKED_RV", Long.toString(party.getId()));
-                //TODO
+                Bundle bundle = new Bundle();
+                bundle.putLong("id", party.getId());
+                NavHostFragment.findNavController(
+                        ((FragmentActivity)context).getSupportFragmentManager().
+                                findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getFragments().get(0)).
+                        navigate(R.id.action_matchesFragment_to_gameFragment, bundle);
+                ((MainActivity) context).hideNavigationBar();
             }
         });
     }
