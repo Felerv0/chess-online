@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Chess_Online</string>
+    <string name="app_name">Chess Online</string>
     <string name="tv_login">Логин:</string>
     <string name="tv_name">Имя:</string>
     <string name="tv_email">Почта:</string>
