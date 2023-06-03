@@ -39,12 +39,36 @@
         app:layout_constraintStart_toStartOf="@id/gl_left"
         app:layout_constraintTop_toTopOf="@id/gl_for_back_button"
         android:background="@drawable/back_button_arrow"/>
+    <LinearLayout
+        android:id="@+id/user1_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/gl_left"
+        app:layout_constraintEnd_toEndOf="@id/gl_right"
+        app:layout_constraintTop_toBottomOf="@id/btn_back"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/white_king"/>
+        <TextView
+            android:id="@+id/user1_tv"
+            android:layout_gravity="bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/riffic_bold"
+            android:textSize="20sp"
+            android:text="Username"
+            />
+    </LinearLayout>
+
     <com.example.chess_online.view.BoardView
         android:id="@+id/chess_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/btn_back"
-        android:layout_marginTop="60dp"
+        app:layout_constraintTop_toBottomOf="@id/user1_layout"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:clickAnabled="true"
         app:tileMarkingEnabled="true"
@@ -53,4 +77,28 @@
         app:markedTileColor="@android:color/holo_blue_light"
         app:invalidPosClickColor="@android:color/holo_red_dark"
         app:tileMarkingAnimation="IterativeFading"/>
+    <LinearLayout
+        android:id="@+id/user2_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/gl_left"
+        app:layout_constraintEnd_toEndOf="@id/gl_right"
+        app:layout_constraintTop_toBottomOf="@id/chess_board"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/black_king"/>
+        <TextView
+            android:id="@+id/user2_tv"
+            android:layout_gravity="bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/riffic_bold"
+            android:textSize="20sp"
+            android:text="Username"
+            />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

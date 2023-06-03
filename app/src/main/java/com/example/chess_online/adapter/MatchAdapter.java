@@ -55,6 +55,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.ViewHolder> 
                 Log.i("CLICKED_RV", Long.toString(party.getId()));
                 Bundle bundle = new Bundle();
                 bundle.putLong("id", party.getId());
+                bundle.putString("user1", party.getUser1());
+                bundle.putString("user2", party.getUser2());
                 NavHostFragment.findNavController(
                         ((FragmentActivity)context).getSupportFragmentManager().
                                 findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getFragments().get(0)).

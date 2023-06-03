@@ -68,5 +68,9 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.example.chess_online.fragment.GameFragment"
-        android:label="GameFragment" />
+        android:label="GameFragment" >
+        <action
+            android:id="@+id/action_gameFragment_to_matchesFragment"
+            app:destination="@id/matchesFragment" />
+    </fragment>
 </navigation>

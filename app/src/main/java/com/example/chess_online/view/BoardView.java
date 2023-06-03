@@ -170,8 +170,8 @@ public class BoardView extends GridLayout {
 
     /**
      * Remove a piece from the board.
-     * @param i coordenada i.
-     * @param j coordenada j.
+     * @param i coord i.
+     * @param j coord j.
      */
     public void removePiece(int i, int j){
         if(!isPosValid(i, j)){
@@ -179,6 +179,9 @@ public class BoardView extends GridLayout {
         }
 
         View view = piecesMatrix[i][j];
+        if (view == null) {
+            return;
+        }
         view.setVisibility(View.GONE);
         piecesMatrix[i][j] = null;
     }
@@ -187,7 +190,6 @@ public class BoardView extends GridLayout {
      * Create board background.
      */
     private void setBoardBackground(int dimm){
-        //Para cada coordenada do tabuleiro, cria uma view.
         for(int i = 0; i < BOARD_DIMENSION; i++){
             for(int j = 0; j < BOARD_DIMENSION; j++){
                 View tile = createTile(chooseTileColor(i, j), dimm);
@@ -205,7 +207,7 @@ public class BoardView extends GridLayout {
         i--;
         j--;
         if (dimm == -1){
-            pieceQueues.add(new PieceQueue(new Pos(i, j), imageid));
+            pieceQueues.add(new PieceQueue(new Pos(i+1, j+1), imageid));
             return;
         }
 
@@ -400,8 +402,8 @@ public class BoardView extends GridLayout {
 
     public void unmarkAllTiles(){
         for(View view : markedTiles){
-            Pos posViewTabuleiro = getTilePos(view);
-            unmarkTile(posViewTabuleiro.getI(), posViewTabuleiro.getJ());
+            Pos posViewTable = getTilePos(view);
+            unmarkTile(posViewTable.getI(), posViewTable.getJ());
         }
 
         markedTiles.clear();
@@ -482,14 +484,31 @@ public class BoardView extends GridLayout {
                 unmarkAllTiles();
 
                 boolean isSameLast = v.equals(lastSelectedPiece);
-
-                currentPieceSelected = isSameLast && currentPieceSelected != null? null : v;
+                currentPieceSelected = isSameLast && currentPieceSelected != null ? null : v;
 
                 lastSelectedPiece = v;
-                if(boardListener != null){
+                if (boardListener != null) {
                     Pos pos = getPiecePos(v);
                     boardListener.onClickPiece(pos, isSameLast && currentPieceSelected == null);
                 }
+//                boolean flag = false;
+//                if (markedTiles.size() > 0) {
+//                    for (View view : markedTiles) {
+//                        if (getPiecePos(lastSelectedPiece).equals(getTilePos(v))) {
+//                            boardListener.onClickTile(getPiecePos(lastSelectedPiece), getPiecePos(v));
+//                            flag = true;
+//                        }
+//                    }
+//                }
+//                if (!flag) {
+//                    currentPieceSelected = isSameLast && currentPieceSelected != null ? null : v;
+//
+//                    lastSelectedPiece = v;
+//                    if (boardListener != null) {
+//                        Pos pos = getPiecePos(v);
+//                        boardListener.onClickPiece(pos, isSameLast && currentPieceSelected == null);
+//                    }
+//                }
             }
         };
     }

@@ -102,6 +102,10 @@ public class GameState {
         this.user1 = user1;
     }
 
+    public void setMyTurn(boolean myTurn) {
+        this.myTurn = myTurn;
+    }
+
     public void setUser2(String user2) {
         this.user2 = user2;
     }

@@ -174,7 +174,7 @@ public class AppApiVolley implements AppApi {
         queue.add(jsonObjectRequest);
     }
 
-    public void getMatch(long id, User user) {
+    public void getMatch(long id, User user, boolean isRefresh) {
         RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
         String url = BASE_URL + "/api/" + id + "/get";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -184,10 +184,9 @@ public class AppApiVolley implements AppApi {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.i("CHECK_FUNC", "CHECK");
                         GameState gameState = new GameState(response);
                         Log.i("API_MATCH_GET", gameState.toString());
-                        ((GameFragment) fragment).setCurrentState(gameState);
+                        ((GameFragment) fragment).setCurrentState(gameState, isRefresh);
                     }
                 },
                 new Response.ErrorListener() {
@@ -202,41 +201,6 @@ public class AppApiVolley implements AppApi {
             }
         };
         queue.add(jsonObjectRequest);
-//        RequestQueue queue = Volley.newRequestQueue(fragment.requireContext());
-//        String url = BASE_URL + "/api/" + user.getUsername() + "/matches";
-//        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
-//                Request.Method.GET,
-//                url,
-//                null,
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        try {
-//                            for (int i = 0; i < response.length(); i++) {
-//                                JSONObject object = response.getJSONObject(i);
-//                                GameState gameState = new GameState(object);
-//                                if (gameState.getId() == id) {
-//                                    ((GameFragment) fragment).setCurrentState(gameState);
-//                                }
-//                            }
-//                        }
-//                        catch (JSONException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        ((MatchesFragment) fragment).makeToastFailedLoad();
-//                    }
-//                }
-//        ){
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                return getHeadersBasic();
-//            }
-//        };
-//        queue.add(jsonObjectRequest);
     }
 
     public void applyMove(long id, FigureMove figureMove) throws JSONException {
